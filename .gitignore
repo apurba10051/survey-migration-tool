@@ -1,0 +1,18 @@
+# Build artifacts
+dist/
+build/
+*.spec.bak
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Generated output (reproducible from source data)
+sample_data/veeva_surveys_lsc.csv
+
+# Source data — kept private, not for repo
+sample_data/SURVEY_DATA.xlsx

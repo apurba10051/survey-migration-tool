@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    {# ── Page order assignment ── #}
+    <assignments>
+        <name>pageNamesInOrder_Assignment</name>
+        <label>pageNamesInOrder_Assignment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>pageNamesInOrder</assignToReference>
+            <operator>Add</operator>
+            <value><stringValue>welcome_page</stringValue></value>
+        </assignmentItems>
+        {% for page in pages %}
+        <assignmentItems>
+            <assignToReference>pageNamesInOrder</assignToReference>
+            <operator>Add</operator>
+            <value><stringValue>{{ page.developer_name }}</stringValue></value>
+        </assignmentItems>
+        {% endfor %}
+        <assignmentItems>
+            <assignToReference>pageNamesInOrder</assignToReference>
+            <operator>Add</operator>
+            <value><stringValue>thank_you_page</stringValue></value>
+        </assignmentItems>
+        <connector>
+            <targetReference>welcome_page</targetReference>
+        </connector>
+    </assignments>
+
+    {# ── Choices — all must appear before first <screens> ── #}
+    {% for question in all_questions if question.choices %}
+    {% for choice in question.choices %}
+    <choices>
+        <name>{{ choice.name }}</name>
+        <choiceText>{{ choice.text | e }}</choiceText>
+        {% if question.type in ['Rating', 'CSAT'] %}
+        <dataType>Number</dataType>
+        <value><numberValue>{{ choice.text }}</numberValue></value>
+        {% else %}
+        <dataType>String</dataType>
+        <value><stringValue>{{ choice.text | e }}</stringValue></value>
+        {% endif %}
+        {% if choice.score is not none %}<score>{{ choice.score }}</score>{% endif %}
+    </choices>
+    {% endfor %}
+    {% endfor %}
+
+    {# ── Decisions (branching logic) — must appear before <screens> ── #}
+    {% for d in decisions %}
+    <decisions>
+        <name>{{ d.name }}</name>
+        <label>{{ d.label | e }}</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        {% if d.default_connector %}
+        <defaultConnector>
+            <targetReference>{{ d.default_connector }}</targetReference>
+        </defaultConnector>
+        {% endif %}
+        <defaultConnectorLabel>{{ d.default_label }}</defaultConnectorLabel>
+        {% if d.rules %}
+        {% for r in d.rules %}
+        <rules>
+            <name>{{ d.name }}_rule_{{ loop.index0 }}</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <processMetadataValues>
+                    <name>inputDataType</name>
+                    <value><stringValue>String</stringValue></value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideType</name>
+                    <value><stringValue>Picklist</stringValue></value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>operatorDataType</name>
+                    <value><stringValue>String</stringValue></value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>rightHandSideType</name>
+                    <value><stringValue>String</stringValue></value>
+                </processMetadataValues>
+                <leftValueReference>{{ d.question_reference }}</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    {% if r.choice_api_name %}
+                    <elementReference>{{ r.choice_api_name }}</elementReference>
+                    {% else %}
+                    <stringValue>{{ r.answer | e }}</stringValue>
+                    {% endif %}
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>{{ r.page }}</targetReference>
+            </connector>
+            <label>{{ r.answer | e }}</label>
+        </rules>
+        {% endfor %}
+        {% else %}
+        <rules>
+            <name>{{ d.name }}_rule</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <processMetadataValues>
+                    <name>inputDataType</name>
+                    <value><stringValue>String</stringValue></value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>leftHandSideType</name>
+                    <value><stringValue>Picklist</stringValue></value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>operatorDataType</name>
+                    <value><stringValue>String</stringValue></value>
+                </processMetadataValues>
+                <processMetadataValues>
+                    <name>rightHandSideType</name>
+                    <value><stringValue>String</stringValue></value>
+                </processMetadataValues>
+                <leftValueReference>{{ d.question_reference }}</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>{{ d.branch_answer }}</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>{{ d.branch_to }}</targetReference>
+            </connector>
+            <label>{{ d.branch_answer }}</label>
+        </rules>
+        {% endif %}
+    </decisions>
+    {% endfor %}
+
+    <interviewLabel>{{ survey_name | e }}</interviewLabel>
+    <label>{{ survey_name | e }}</label>
+
+    {# ── Survey-level settings ── #}
+    <processMetadataValues>
+        <name>advanceThankYouPageEnabled</name>
+        <value><booleanValue>false</booleanValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>autoProgressEnabled</name>
+        <value><booleanValue>false</booleanValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>autosaveTimeWindow</name>
+        <value><numberValue>5.0</numberValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>hasWelcomePage</name>
+        <value><booleanValue>true</booleanValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>isAutosaveEnabled</name>
+        <value><booleanValue>false</booleanValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>isSimpleSurvey</name>
+        <value><booleanValue>false</booleanValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>overrideActiveVersion</name>
+        <value><booleanValue>false</booleanValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>pageOptionsMap</name>
+        <value>
+            <stringValue>{{ page_options_map | e }}</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>surveyType</name>
+        <value><stringValue>OfflineMobile</stringValue></value>
+    </processMetadataValues>
+
+    <processType>Survey</processType>
+
+    {# ── Content pages first (welcome page comes last per working org pattern) ── #}
+    {% for page in pages %}
+    <screens>
+        <name>{{ page.developer_name }}</name>
+        <label>{{ page.label | e }}</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        {% if page.connector %}
+        <connector>
+            <targetReference>{{ page.connector }}</targetReference>
+        </connector>
+        {% endif %}
+        {% for question in page.questions %}
+        <fields>
+            <processMetadataValues>
+                <name>autoProgressAction</name>
+                <value><stringValue>NONE</stringValue></value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isDeletable</name>
+                <value><booleanValue>true</booleanValue></value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isEditable</name>
+                <value><booleanValue>true</booleanValue></value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isMovableDown</name>
+                <value><booleanValue>true</booleanValue></value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>isMovableUp</name>
+                <value><booleanValue>true</booleanValue></value>
+            </processMetadataValues>
+            {% if question.type == 'Slider' %}
+            <processMetadataValues>
+                <name>max</name>
+                <value><stringValue>{{ question.slider_max }}</stringValue></value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>min</name>
+                <value><stringValue>{{ question.slider_min }}</stringValue></value>
+            </processMetadataValues>
+            <processMetadataValues>
+                <name>scale</name>
+                <value><stringValue>1</stringValue></value>
+            </processMetadataValues>
+            {% endif %}
+            <name>{{ question.developer_name }}</name>
+            {% for choice in question.choices %}
+            <choiceReferences>{{ choice.name }}</choiceReferences>
+            {% endfor %}
+            {% if question.data_type %}
+            <dataType>{{ question.data_type }}</dataType>
+            {% endif %}
+            {% if question.extension_name %}
+            <extensionName>{{ question.extension_name }}</extensionName>
+            {% endif %}
+            <fieldText>&lt;p&gt;&lt;strong&gt;{{ question.text | e }}&lt;/strong&gt;&lt;/p&gt;</fieldText>
+            <fieldType>{{ question.field_type }}</fieldType>
+            <isRequired>{{ question.required | lower }}</isRequired>
+            {% if question.type in ['Slider', 'Number', 'Rating', 'CSAT'] %}
+            <scale>0</scale>
+            {% endif %}
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+            {% if question.visibility_rule %}
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>{{ question.visibility_rule.question_dev }}</leftValueReference>
+                    <operator>{{ question.visibility_rule.operator }}</operator>
+                    <rightValue><stringValue>{{ question.visibility_rule.value | e }}</stringValue></rightValue>
+                </conditions>
+            </visibilityRule>
+            {% endif %}
+        </fields>
+        {% endfor %}
+        <pausedText>To pick up where you left off, refresh this page, or open the survey again.</pausedText>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    {% endfor %}
+
+    {# ── Welcome page last (matches working org survey pattern) ── #}
+    <screens>
+        <name>welcome_page</name>
+        <label>Welcome Page</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>{{ pages[0].developer_name }}</targetReference>
+        </connector>
+        <fields>
+            <name>welcome_question</name>
+            <extensionName>survey:runtimeWelcome</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value><stringValue>{!welcome_question_lref_tt}</stringValue></value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+
+    <startElementReference>pageNamesInOrder_Assignment</startElementReference>
+    <status>Active</status>
+
+    {# ── Text templates ── #}
+    <textTemplates>
+        <name>thankYouDescriptionTextTemplate</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>{{ thankyou_text | e }}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>thankYouLabelTextTemplate</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;strong&gt;{{ thankyou_label | e }}&lt;/strong&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>welcome_question_lref_tt</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;strong&gt;{{ welcome_text | e }}&lt;/strong&gt;&lt;/p&gt;</text>
+    </textTemplates>
+
+    {# ── Required variables ── #}
+    <variables>
+        <name>guestUserLang</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>invitationId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value><stringValue></stringValue></value>
+    </variables>
+    <variables>
+        <name>pageNamesInOrder</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>previewMode</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value><booleanValue>false</booleanValue></value>
+    </variables>
+    <variables>
+        <name>thankYouDescription</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value><stringValue>{!thankYouDescriptionTextTemplate}</stringValue></value>
+    </variables>
+    <variables>
+        <name>thankYouLabel</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <value><stringValue>{!thankYouLabelTextTemplate}</stringValue></value>
+    </variables>
+</Flow>

@@ -1,0 +1,8 @@
+__pycache__
+*.pyc
+*.pyo
+.DS_Store
+sample_data
+Survey_excel.csv
+VEEVA_TO_XML_DESIGN.md
+*.md
