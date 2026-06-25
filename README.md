@@ -53,11 +53,7 @@ survey-migration-tool/
 ├── .github/
 │   └── workflows/
 │       └── build.yml         # GitHub Actions — builds macOS arm64 + x86_64 on tag push
-│
-├── MIGRATION_SUMMARY.md      # Full inventory of all 73 migrated surveys
-├── HANDOVER_NOTE.md          # Plain-language guide for the receiving team
-├── TECHNICAL_DOC.md          # Deep-dive: flow structure, element types, known limits
-└── SPECIAL_LOGIC.md          # Edge cases: branch chaining, disclaimers, Picklist cap, etc.
+├── TECHNICAL_DOC.md          # Deep-dive: flow structure, element types, known limits, edge cases etc
 ```
 
 ---
