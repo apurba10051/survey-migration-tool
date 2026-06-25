@@ -8,22 +8,12 @@ Migrates Veeva CRM surveys to **LSC OfflineMobile** Flow XML, with a Streamlit U
 
 ## Download
 
-<table>
-<tr>
-<td align="center" width="50%">
+<p align="center">
 <a href="https://github.com/apurba10051/survey-migration-tool/releases/latest/download/Survey-Generator-macOS-arm64.zip">
 <img src="https://img.shields.io/badge/Download-Apple%20Silicon%20(M1%2FM2%2FM3%2FM4)-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for Apple Silicon"/>
 </a>
 <br/><sub>macOS arm64 · M1 / M2 / M3 / M4</sub>
-</td>
-<td align="center" width="50%">
-<a href="https://github.com/apurba10051/survey-migration-tool/releases/latest/download/Survey-Generator-macOS-x86_64.zip">
-<img src="https://img.shields.io/badge/Download-Intel%20Mac%20(x86__64)-0078D4?style=for-the-badge&logo=apple&logoColor=white" alt="Download for Intel Mac"/>
-</a>
-<br/><sub>macOS x86_64 · Intel</sub>
-</td>
-</tr>
-</table>
+</p>
 
 > **First launch:** macOS will block an unsigned app. Right-click → **Open** → **Open** to approve once.
 

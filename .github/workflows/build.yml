@@ -8,18 +8,8 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - arch: arm64
-            target_arch: arm64
-          - arch: x86_64
-            target_arch: x86_64
-
-    # Both jobs run on macos-14 (arm64 runner) — fast to pick up.
-    # PyInstaller cross-compiles x86_64 via target_arch in the spec.
     runs-on: macos-14
-    name: Build (${{ matrix.arch }})
+    name: Build (arm64)
 
     steps:
       - name: Checkout
@@ -37,25 +27,18 @@ jobs:
           pip install pyinstaller
 
       - name: Build app
-        env:
-          TARGET_ARCH: ${{ matrix.target_arch }}
-        run: |
-          # Patch spec target_arch at build time so both jobs run on arm64 runner
-          sed -i '' "s/target_arch=None/target_arch='${TARGET_ARCH}'/" survey_generator.spec
-          pyinstaller survey_generator.spec --noconfirm
+        run: pyinstaller survey_generator.spec --noconfirm
 
       - name: Zip app bundle
-        env:
-          ARCH: ${{ matrix.arch }}
         run: |
           cd dist
-          zip -r "../Survey-Generator-macOS-${ARCH}.zip" "Survey Generator.app"
+          zip -r "../Survey-Generator-macOS-arm64.zip" "Survey Generator.app"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Survey-Generator-macOS-${{ matrix.arch }}
-          path: Survey-Generator-macOS-${{ matrix.arch }}.zip
+          name: Survey-Generator-macOS-arm64
+          path: Survey-Generator-macOS-arm64.zip
           retention-days: 30
 
   release:
@@ -66,20 +49,13 @@ jobs:
       contents: write
 
     steps:
-      - name: Download arm64 artifact
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: Survey-Generator-macOS-arm64
 
-      - name: Download x86_64 artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: Survey-Generator-macOS-x86_64
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            Survey-Generator-macOS-arm64.zip
-            Survey-Generator-macOS-x86_64.zip
+          files: Survey-Generator-macOS-arm64.zip
           generate_release_notes: true
