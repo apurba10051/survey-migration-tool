@@ -1,14 +1,41 @@
 # Survey Migration Tool
 
-Migrates Veeva CRM surveys to **Salesforce LSC OfflineMobile** Flow XML, with a Streamlit UI for preview, validation, and download. Packaged as a double-click macOS `.app` (no Python required) and built for both Apple Silicon and Intel via GitHub Actions.
+[![Build macOS App](https://github.com/apurba10051/survey-migration-tool/actions/workflows/build.yml/badge.svg)](https://github.com/apurba10051/survey-migration-tool/actions/workflows/build.yml)
+
+Migrates Veeva CRM surveys to **LSC OfflineMobile** Flow XML, with a Streamlit UI for preview, validation, and download. Packaged as a double-click macOS `.app` (no Python required) and built for both Apple Silicon and Intel via GitHub Actions.
+
+---
+
+## Download
+
+<table>
+<tr>
+<td align="center" width="50%">
+<a href="https://github.com/apurba10051/survey-migration-tool/releases/latest/download/Survey-Generator-macOS-arm64.zip">
+<img src="https://img.shields.io/badge/Download-Apple%20Silicon%20(M1%2FM2%2FM3%2FM4)-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for Apple Silicon"/>
+</a>
+<br/><sub>macOS arm64 · M1 / M2 / M3 / M4</sub>
+</td>
+<td align="center" width="50%">
+<a href="https://github.com/apurba10051/survey-migration-tool/releases/latest/download/Survey-Generator-macOS-x86_64.zip">
+<img src="https://img.shields.io/badge/Download-Intel%20Mac%20(x86__64)-0078D4?style=for-the-badge&logo=apple&logoColor=white" alt="Download for Intel Mac"/>
+</a>
+<br/><sub>macOS x86_64 · Intel</sub>
+</td>
+</tr>
+</table>
+
+> **First launch:** macOS will block an unsigned app. Right-click → **Open** → **Open** to approve once.
+
+All releases → [Releases page](https://github.com/apurba10051/survey-migration-tool/releases)
 
 ---
 
 ## What it does
 
 1. Accepts a Veeva `SURVEY_DATA.xlsx` export (two tabs: `SURVEY_VOD` + `SURVEY_QUESTION_VOD`) or a plain CSV
-2. Transforms Veeva question types, answer choices, and branch conditions into Salesforce Flow XML
-3. Produces `.flow-meta.xml` files deployable to Salesforce via `sf project deploy start`
+2. Transforms Veeva question types, answer choices, and branch conditions into Flow XML
+3. Produces `.flow-meta.xml` files ready to deploy
 
 ---
 
@@ -69,16 +96,7 @@ Opens at `http://localhost:8501`.
 
 ## macOS desktop app (no Python required)
 
-Pre-built `.app` bundles are attached to every [GitHub Release](../../releases):
-
-| File | Platform |
-|---|---|
-| `Survey-Generator-macOS-arm64.zip` | Apple Silicon (M1/M2/M3/M4) |
-| `Survey-Generator-macOS-x86_64.zip` | Intel Mac |
-
-Download, unzip, and double-click `Survey Generator.app`.
-
-> **First launch:** macOS Gatekeeper will block an unsigned app. Right-click → **Open** → **Open** to approve once. After that it opens normally.
+Download the latest build from the [Download](#download) section above, unzip, and double-click `Survey Generator.app`.
 
 The app starts a local Streamlit server and opens your browser automatically. No Python installation needed.
 
