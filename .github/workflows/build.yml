@@ -11,12 +11,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-14       # Apple Silicon (arm64)
-            arch: arm64
-          - os: macos-13       # Intel (x86_64)
-            arch: x86_64
+          - arch: arm64
+            target_arch: arm64
+          - arch: x86_64
+            target_arch: x86_64
 
-    runs-on: ${{ matrix.os }}
+    # Both jobs run on macos-14 (arm64 runner) — fast to pick up.
+    # PyInstaller cross-compiles x86_64 via target_arch in the spec.
+    runs-on: macos-14
     name: Build (${{ matrix.arch }})
 
     steps:
@@ -35,7 +37,12 @@ jobs:
           pip install pyinstaller
 
       - name: Build app
-        run: pyinstaller survey_generator.spec --noconfirm
+        env:
+          TARGET_ARCH: ${{ matrix.target_arch }}
+        run: |
+          # Patch spec target_arch at build time so both jobs run on arm64 runner
+          sed -i '' "s/target_arch=None/target_arch='${TARGET_ARCH}'/" survey_generator.spec
+          pyinstaller survey_generator.spec --noconfirm
 
       - name: Zip app bundle
         env:
