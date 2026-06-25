@@ -579,30 +579,6 @@ cp force-app/main/default/flows/problem_survey.flow-meta.xml flows_excluded/
 
 Re-deploying an existing flow creates a new version and activates it. Previous versions are deactivated.
 
-### Branching surveys — recommended test matrix
-
-All 14 surveys below have multi-page branching. Open each from a Call record in the LSC iPad app (after device sync), select a choice on Page 1, and verify the correct branch page appears.
-
-| Survey display name | Pages | Questions | Router question (Veeva NAME) | Branching complexity |
-|---|---|---|---|---|
-| ITA_Vaccine_Segmentation_HSP_24 | 5 | 6 | SQ00033840 | 4 answer branches, all terminal — hardest to test; good smoke test for defaultConnector fix |
-| ITA_Vaccine_Segmentation_NAM_24 | 5 | 6 | SQ00033838 | 4 answer branches, all terminal |
-| Survey HCP ATTR-CM/Vyndaqel | 4 | 14 | SQ00034519 | 3 answer branches, most questions per branch |
-| Profilazione HCP Lorviqua | 4 | 5 | SQ00034350 | 3 answer branches |
-| Elrexfio dicembre 2025 | 3 | 6 | SQ00038821 | 2 answer branches |
-| Gastro Attitudinal Segmentation 2025 | 3 | 4 | SQ00035748 | 2 answer branches |
-| IBRANCE Survey | 2 | 55 | SQ00036536, SQ00036539, SQ00036542 | 3 independent routers; highest question count |
-| ISF Ginecologo - Abrysvo | 2 | 6 | SQ00040468 | 1 branch |
-| Cibinqo Attitudinal Segmentation 2025 | 2 | 4 | SQ00035744 | 1 branch |
-| ISF GP - Paxlovid | 2 | 4 | SQ00040474 | 1 branch |
-| IT_Survey_Eliquis | 2 | 4 | SQ00034026 | 1 branch |
-| Vyndaqel Attitudinal | 2 | 4 | SQ00038301 | 1 branch |
-| GP_Survey_Paxlovid | 2 | 3 | SQ00035272 | 1 branch |
-| GPs_Survey_No_Promo_ATTR-CM | 2 | 3 | SQ00035279 | 1 branch |
-
-**Priority test order:** Start with ITA_Vaccine_Segmentation_HSP_24 (most complex, most likely to surface runtime issues). Then Survey HCP ATTR-CM/Vyndaqel (most questions per branch, good regression coverage). If those pass, remaining surveys are lower-risk.
-
----
 
 ## 12. Special Logic Reference
 
