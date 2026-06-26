@@ -126,6 +126,11 @@ def transform(xlsx_path, output_path):
         sid  = r["ID"]
         name = r["NAME"]
         dc1  = r.get("DC1__C", "").strip()
+        # Veeva sometimes stores "Welcome to the <ID> survey." in DC1__C —
+        # detect any Salesforce/Veeva record ID (15–18 alphanumeric chars) and
+        # replace with the actual display name.
+        if dc1:
+            dc1 = re.sub(r'\b[A-Za-z0-9]{15,18}\b', name, dc1)
         welcome_text = dc1 if dc1 else f"Welcome to the {name} survey. Please answer all questions."
 
         s = slugify(name).strip("_")
