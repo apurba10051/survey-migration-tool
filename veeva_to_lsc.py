@@ -123,15 +123,16 @@ def transform(xlsx_path, output_path):
     welcome_by_id      = {}   # id   → welcome text     (used for dup names)
 
     for _, r in df1.iterrows():
-        sid  = r["ID"]
-        name = r["NAME"]
+        sid          = r["ID"]
+        name         = r["NAME"]
+        display_name = name.replace("_", " ")
         dc1  = r.get("DC1__C", "").strip()
         # Veeva sometimes stores "Welcome to the <ID> survey." in DC1__C —
         # detect any Salesforce/Veeva record ID (15–18 alphanumeric chars) and
-        # replace with the actual display name.
+        # replace with the human-readable display name.
         if dc1:
-            dc1 = re.sub(r'\b[A-Za-z0-9]{15,18}\b', name, dc1)
-        welcome_text = dc1 if dc1 else f"Welcome to the {name} survey. Please answer all questions."
+            dc1 = re.sub(r'\b[A-Za-z0-9]{15,18}\b', display_name, dc1)
+        welcome_text = dc1 if dc1 else f"Welcome to the {display_name} survey. Please answer all questions."
 
         s = slugify(name).strip("_")
         if not s:
